@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="vi" class="js-loading">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review - Performance Portfolio</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind Config -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#FF3500',
+                            bg: '#F4F4F5',
+                            dark: '#18181B'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Space Grotesk', 'sans-serif'],
+                        heading: ['Space Grotesk', 'sans-serif'],
+                    },
+                    animation: {
+                        'marquee': 'marquee 20s linear infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-100%)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Base Styling */
+        body {
+            background-color: #e5e5e5;
+            padding: 20px;
+            cursor: none; /* Hide default cursor for custom cursor */
+        }
+        
+        .poster-container {
+            width: 100%;
+            max-width: 1440px;
+            margin: 0 auto;
+            min-height: calc(100vh - 40px);
+        }
+        
+        .marquee-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Prevent FOUC (Flash of Unstyled Content) during JS load */
+        .js-loading .reveal-text,
+        .js-loading .stagger-item,
+        .js-loading .reveal-img-container {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* Lenis Smooth Scroll Recommended CSS */
+        html.lenis, html.lenis body {
+            height: auto;
+        }
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+        .lenis.lenis-smooth iframe {
+            pointer-events: none;
+        }
+
+        /* Custom Cursor */
+        .cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 12px;
+            height: 12px;
+            background-color: #FF3500;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 9999;
+            transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+                        height 0.3s cubic-bezier(0.25, 1, 0.5, 1),
+                        background-color 0.3s ease;
+        }
+        .cursor-dot.active {
+            width: 40px;
+            height: 40px;
+            background-color: transparent;
+            border: 2px solid #FF3500;
+            backdrop-filter: invert(10%);
+        }
+        
+        /* Interactive element wrapper fix for magnetic effect */
+        .magnetic-wrap {
+            display: inline-block;
+            padding: 10px;
+            margin: -10px;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-brand-orange selection:text-white">
+
+    <!-- Custom Cursor Element -->
+    <div class="cursor-dot hidden md:block"></div>
+
+    <!-- Đã bỏ class overflow-hidden để sticky header có thể hoạt động -->
+    <div class="poster-container bg-brand-bg border border-brand-dark flex flex-col relative shadow-2xl">
+        
+        <!-- Đổi top-[20px] thành top-0 để header sát rạt lề trên của trình duyệt -->
+        <header class="flex flex-col md:flex-row border-b border-brand-dark bg-brand-bg h-auto md:h-16 shrink-0 relative z-[100] sticky top-0">
+            <div class="bg-brand-orange text-white font-black text-xl px-8 py-4 md:py-0 border-b md:border-b-0 md:border-r border-brand-dark flex items-center justify-center tracking-wider w-full md:w-[150px] shrink-0 interactable">
+                REVIEW.
+            </div>
+            
+            <nav class="flex-1 flex flex-wrap items-center justify-center gap-6 md:gap-10 px-4 py-4 md:py-0 text-[11px] md:text-xs font-semibold tracking-widest text-brand-dark uppercase">
+                <div class="magnetic-wrap"><a href="#my-work" class="interactable magnetic-item hover:text-brand-orange transition-colors">My Work</a></div>
+                <div class="magnetic-wrap"><a href="#how-i-grew" class="interactable magnetic-item hover:text-brand-orange transition-colors">How I Grew</a></div>
+                <div class="magnetic-wrap"><a href="#how-i-think" class="interactable magnetic-item hover:text-brand-orange transition-colors">How I Think</a></div>
+                <div class="magnetic-wrap"><a href="#goals" class="interactable magnetic-item hover:text-brand-orange transition-colors">Goals Check-In</a></div>
+                <div class="magnetic-wrap"><a href="#whats-next" class="interactable magnetic-item hover:text-brand-orange transition-colors">What's Next</a></div>
+                <div class="magnetic-wrap"><a href="#reflections" class="interactable magnetic-item hover:text-brand-orange transition-colors">Reflections & Suggestions</a></div>
+            </nav>
+
+            <div class="border-t md:border-t-0 md:border-l border-brand-dark px-6 py-4 md:py-0 flex items-center justify-center gap-2 text-sm font-medium w-full md:w-[150px] shrink-0">
+                <span class="text-brand-orange text-lg leading-none">&bull;</span> 04/2026
+            </div>
+        </header>
+
+        <main class="flex-1 flex flex-col relative w-full">
+    
+            <!-- Background Lines -->
+            <div class="hidden md:block absolute left-[32px] top-0 bottom-0 w-[1px] bg-brand-dark z-0 opacity-20"></div>
+            <div class="hidden md:block absolute right-[32px] top-0 bottom-0 w-[1px] bg-brand-dark z-0 opacity-20"></div>
+            
+            <!-- HERO SECTION -->
+            <section class="flex flex-col md:flex-row relative z-10 min-h-[70vh]">
+                <div class="w-full md:w-1/2 p-8 md:py-16 md:pl-16 md:pr-12 lg:py-24 lg:pl-24 lg:pr-12 flex flex-col justify-center relative z-10 md:border-r border-brand-dark">
+                    <div class="inline-flex w-max mb-10 hero-fade-up">
+                        <div class="bg-brand-orange text-white px-5 py-2.5 text-sm font-semibold tracking-wide border border-brand-dark interactable">
+                            UIUX Designer - Lan Nhi
+                        </div>
+                    </div>
+
+                    <h1 class="reveal-text font-heading text-5xl md:text-7xl lg:text-[80px] font-bold text-brand-dark leading-[1.05] uppercase tracking-tight mb-8">
+                        Building<br>
+                        Products, Not<br>
+                        Just Designs.
+                    </h1>
+
+                    <p class="hero-fade-up text-gray-600 text-lg md:text-xl max-w-md leading-relaxed font-medium">
+                        Từ UI/UX execution &rarr; tham gia định hình sản phẩm & hệ thống
+                    </p>
+                </div>
+
+                <div class="w-full md:w-1/2 p-8 md:p-16 flex items-center justify-center relative z-10 bg-gray-50/50">
+                    <div class="hero-anim-wrapper w-full max-w-[400px]">
+                        <div class="hero-image-wrapper group relative w-full aspect-[4/5] interactable rotate-3 hover:rotate-0 transition-transform duration-500 ease-out cursor-pointer">
+                            <!-- Shadow Layer -->
+                            <div class="hero-shadow absolute inset-0 bg-brand-dark group-hover:bg-brand-orange translate-x-4 translate-y-4 border border-brand-dark transition-colors duration-500"></div>
+                            <!-- Image Layer -->
+                            <div class="hero-img-box absolute inset-0 bg-white border border-brand-dark p-3 overflow-hidden shadow-xl origin-center">
+                                <img 
+                                    src="https://i.ibb.co/4nQ7z0k6/Rectangle-8.png" 
+                                    alt="Lan Nhi - UI/UX Designer" 
+                                    class="hero-img w-full h-full object-cover grayscale-[20%] contrast-125 scale-110 transition-all duration-700 group-hover:grayscale-0 group-hover:scale-100"
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MARQUEE DIVIDER -->
+            <div class="border-t border-brand-dark flex h-10 md:h-12 shrink-0 bg-brand-dark relative z-20 w-full interactable">
+                <div class="w-10 md:w-12 border-r border-brand-dark flex items-center justify-center shrink-0">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <polyline points="12 6 12 12 16 14"></polyline>
+                    </svg>
+                </div>
+                
+                <div class="flex-1 bg-brand-orange overflow-hidden relative flex items-center marquee-container">
+                    <div class="flex whitespace-nowrap animate-marquee text-white font-semibold text-xs tracking-[0.2em]">
+                        <span class="mx-4">&bull; EASTPLAYERS &bull; MID-YEAR PERFORMANCE REVIEW</span>
+                        <span class="mx-4">&bull; EASTPLAYERS &bull; MID-YEAR PERFORMANCE REVIEW</span>
+                        <span class="mx-4">&bull; EASTPLAYERS &bull; MID-YEAR PERFORMANCE REVIEW</span>
+                        <span class="mx-4">&bull; EASTPLAYERS &bull; MID-YEAR PERFORMANCE REVIEW</span>
+                        <span class="mx-4">&bull; EASTPLAYERS &bull; MID-YEAR PERFORMANCE REVIEW</span>
+                        <span class="mx-4">&bull; EASTPLAYERS &bull; MID-YEAR PERFORMANCE REVIEW</span>
+                        <span class="mx-4">&bull; EASTPLAYERS &bull; MID-YEAR PERFORMANCE REVIEW</span>
+                        <span class="mx-4">&bull; EASTPLAYERS &bull; MID-YEAR PERFORMANCE REVIEW</span>
+                    </div>
+                </div>
+
+                <div class="w-10 md:w-12 border-l border-brand-dark flex items-center justify-center shrink-0">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                </div>
+            </div>
+
+            <!-- MY WORK SECTION -->
+            <section id="my-work" class="flex flex-col border-t border-brand-dark relative z-10">
+                <div class="flex flex-col md:flex-row relative z-10">
+                    <div class="w-full md:w-1/2 p-8 md:p-16 lg:p-24 flex items-center">
+                        <h2 class="reveal-text font-heading text-4xl md:text-5xl lg:text-[64px] font-bold uppercase tracking-tight text-brand-dark leading-none">
+                            MY <span class="text-brand-orange">WORK</span>
+                        </h2>
+                    </div>
+                    <div class="w-full md:w-1/2 p-8 md:p-16 lg:p-24 flex items-center">
+                        <p class="hero-fade-up text-gray-600 text-base md:text-lg leading-relaxed font-medium max-w-lg">
+                            Từ đợt review trước đến bây giờ, mình chịu trách nhiệm chính cho Pebbles. Ngoài ra, mình cũng có tham gia vào nhiều dự án khác với vai trò định hướng, xây dựng hệ thống và hỗ trợ phát triển sản phẩm.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="w-full relative z-10">
+                    <div class="mx-8 md:mx-[32px] h-[1px] bg-brand-dark opacity-30"></div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 relative z-10">
+                    
+                    <!-- Core Project: Pebbles -->
+                    <div class="flex flex-col border-b md:border-b-0 md:border-r border-brand-dark group cursor-pointer interactable">
+                        <div class="p-8 md:py-12 md:pl-16 lg:pl-24 md:pr-12 project-info-stagger">
+                            <div class="bg-brand-dark text-white px-4 py-1.5 text-xs font-bold tracking-wide border border-brand-dark inline-block mb-6">
+                                Core Project
+                            </div>
+                            <h3 class="font-heading text-4xl font-bold text-brand-dark mb-3 group-hover:text-brand-orange transition-colors">Pebbles</h3>
+                            <p class="text-gray-600 text-sm md:text-base font-medium">Lead MVP experience & product structure, làm việc với dev, PO, PM</p>
+                        </div>
+                        
+                        <div class="w-full project-line">
+                            <div class="mx-8 md:ml-[32px] md:mr-0 h-[1px] bg-brand-dark opacity-30"></div>
+                        </div>
+
+                        <div class="flex w-full h-[300px] md:h-[350px] border-brand-dark">
+                            <div class="hidden md:block w-[32px] shrink-0"></div>
+                            <div class="flex-1 md:border-l border-brand-dark relative bg-brand-dark reveal-img-container overflow-hidden">
+                                <img src="https://i.ibb.co/S776k4KV/Frame-2147225727.png" alt="Pebbles Project" class="w-full h-full object-cover img-parallax opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Internal Product -->
+                    <div class="flex flex-col group cursor-pointer interactable">
+                        <div class="p-8 md:py-12 md:pl-[32px] md:pr-12 project-info-stagger">
+                            <div class="bg-white text-brand-dark px-4 py-1.5 text-xs font-bold tracking-wide border border-brand-dark inline-block mb-6">
+                                Internal Product
+                            </div>
+                            <h3 class="font-heading text-4xl font-bold text-brand-dark mb-3 group-hover:text-brand-orange transition-colors">POC - B2B Product</h3>
+                            <p class="text-gray-600 text-sm md:text-base font-medium">Xây nền tảng sản phẩm B2B để tạo nguồn lead mới</p>
+                        </div>
+                        
+                        <div class="w-full project-line">
+                            <div class="mx-8 md:ml-[0px] md:mr-[32px] h-[1px] bg-brand-dark opacity-30"></div>
+                        </div>
+
+                        <div class="flex w-full h-[300px] md:h-[350px] border-brand-dark">
+                            <div class="flex-1 md:border-r border-brand-dark relative bg-brand-dark reveal-img-container overflow-hidden">
+                                <img src="https://i.ibb.co/KzrVp7G7/Frame-2147225726-1.png" alt="POC B2B Product" class="w-full h-full object-cover img-parallax opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out">
+                            </div>
+                            <div class="hidden md:block w-[32px] shrink-0"></div>
+                        </div>
+                    </div>
+
+                    <!-- Creative: Tetta -->
+                    <div class="flex flex-col md:border-r border-brand-dark group cursor-pointer interactable">
+                        <div class="w-full">
+                            <div class="mx-8 md:ml-[32px] md:mr-0 h-[1px] bg-brand-dark opacity-30"></div>
+                        </div>
+
+                        <div class="p-8 md:py-12 md:pl-16 lg:pl-24 md:pr-12 project-info-stagger">
+                            <div class="bg-white text-brand-dark px-4 py-1.5 text-xs font-bold tracking-wide border border-brand-dark inline-block mb-6">
+                                Creative
+                            </div>
+                            <h3 class="font-heading text-4xl font-bold text-brand-dark mb-3 group-hover:text-brand-orange transition-colors">Tetta</h3>
+                            <p class="text-gray-600 text-sm md:text-base font-medium">Đóng góp ý tưởng sản phẩm, hỗ trợ thiết kế menu</p>
+                        </div>
+
+                        <div class="w-full project-line">
+                            <div class="mx-8 md:ml-[32px] md:mr-0 h-[1px] bg-brand-dark opacity-30"></div>
+                        </div>
+
+                        <div class="flex w-full h-[300px] md:h-[350px] border-brand-dark">
+                            <div class="hidden md:block w-[32px] shrink-0"></div>
+                            <div class="flex-1 md:border-l border-brand-dark relative bg-brand-dark reveal-img-container overflow-hidden">
+                                <img src="https://i.ibb.co/fKC4bhZ/Frame-2147225725-4.png" alt="Tetta Project" class="w-full h-full object-cover img-parallax opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Outsource -->
+                    <div class="flex flex-col group cursor-pointer interactable">
+                        <div class="w-full">
+                            <div class="mx-8 md:ml-0 md:mr-[32px] h-[1px] bg-brand-dark opacity-30"></div>
+                        </div>
+
+                        <div class="p-8 md:py-12 md:pl-[32px] md:pr-12 project-info-stagger">
+                            <div class="bg-white text-brand-dark px-4 py-1.5 text-xs font-bold tracking-wide border border-brand-dark inline-block mb-6">
+                                Outsource
+                            </div>
+                            <h3 class="font-heading text-4xl font-bold text-brand-dark mb-3 group-hover:text-brand-orange transition-colors">Inhuren, Alma, North88...</h3>
+                            <p class="text-gray-600 text-sm md:text-base font-medium">Chịu trách nhiệm định hướng, hướng dẫn các bạn - đảm bảo đầu ra sản phẩm</p>
+                        </div>
+
+                        <div class="w-full project-line">
+                            <div class="mx-8 md:ml-[0px] md:mr-[32px] h-[1px] bg-brand-dark opacity-30"></div>
+                        </div>
+
+                        <div class="flex w-full h-[300px] md:h-[350px] border-brand-dark">
+                            <div class="flex-1 md:border-r border-brand-dark relative bg-brand-dark reveal-img-container overflow-hidden">
+                                <img src="https://i.ibb.co/fY6dSBV2/Frame-2147225726.png" alt="Outsource Projects" class="w-full h-full object-cover img-parallax opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700 ease-out">
+                            </div>
+                            <div class="hidden md:block w-[32px] shrink-0"></div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- HOW I GREW SECTION -->
+            <section id="how-i-grew" class="flex flex-col relative z-10 bg-brand-dark text-white w-full">
+                <div class="p-8 md:p-16 lg:p-24 flex items-center border-t border-brand-dark relative z-10">
+                    <h2 class="reveal-text font-heading text-4xl md:text-5xl lg:text-[72px] font-bold uppercase tracking-tight leading-none text-white">
+                        HOW I <span class="text-brand-orange">GREW</span>
+                    </h2>
+                </div>
+
+                <div class="stagger-list flex flex-col w-full border-t border-white/20 relative z-10">
+                    
+                    <div class="stagger-item interactable flex flex-col md:flex-row border-b border-white/20 hover:bg-white/[0.03] transition-colors group">
+                        <div class="w-full md:w-1/2 p-8 md:px-16 lg:px-24 md:py-12 lg:py-16 flex items-center relative overflow-hidden">
+                            <div class="absolute left-0 w-1 h-full bg-brand-orange scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-bottom"></div>
+                            <h3 class="font-heading text-4xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-500 ease-out">Product Thinking</h3>
+                        </div>
+                        <div class="w-full md:w-1/2 p-8 md:px-16 lg:pr-24 md:py-12 lg:py-16 md:pl-0 flex items-center">
+                            <p class="text-gray-300 text-sm md:text-base leading-relaxed font-medium max-w-lg group-hover:text-white transition-colors duration-500">
+                                Làm dựa trên các yêu cầu từ client &rarr; Áp dụng habit loop và thiết kế dựa trên hành vi người dùng, chia version theo giai đoạn
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="stagger-item interactable flex flex-col md:flex-row border-b border-white/20 hover:bg-white/[0.03] transition-colors group">
+                        <div class="w-full md:w-1/2 p-8 md:px-16 lg:px-24 md:py-12 lg:py-16 flex items-center relative overflow-hidden">
+                            <div class="absolute left-0 w-1 h-full bg-brand-orange scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-bottom"></div>
+                            <h3 class="font-heading text-4xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-500 ease-out">Business Thinking</h3>
+                        </div>
+                        <div class="w-full md:w-1/2 p-8 md:px-16 lg:pr-24 md:py-12 lg:py-16 md:pl-0 flex items-center">
+                            <p class="text-gray-300 text-sm md:text-base leading-relaxed font-medium max-w-lg group-hover:text-white transition-colors duration-500">
+                                Chưa hiểu nhiều về các quyết định theo business &rarr; Hiểu cách sản phẩm tạo ra giá trị kinh doanh và lead
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="stagger-item interactable flex flex-col md:flex-row border-b border-white/20 hover:bg-white/[0.03] transition-colors group">
+                        <div class="w-full md:w-1/2 p-8 md:px-16 lg:px-24 md:py-12 lg:py-16 flex items-center relative overflow-hidden">
+                            <div class="absolute left-0 w-1 h-full bg-brand-orange scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-bottom"></div>
+                            <h3 class="font-heading text-4xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-500 ease-out">Cross-functional</h3>
+                        </div>
+                        <div class="w-full md:w-1/2 p-8 md:px-16 lg:pr-24 md:py-12 lg:py-16 md:pl-0 flex items-center">
+                            <p class="text-gray-300 text-sm md:text-base leading-relaxed font-medium max-w-lg group-hover:text-white transition-colors duration-500">
+                                Làm việc với client và team design &rarr; Làm việc hiệu quả với dev, PO, PM và hiểu constraint thực tế
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="stagger-item interactable flex flex-col md:flex-row border-b border-white/20 hover:bg-white/[0.03] transition-colors group">
+                        <div class="w-full md:w-1/2 p-8 md:px-16 lg:px-24 md:py-12 lg:py-16 flex items-center relative overflow-hidden">
+                            <div class="absolute left-0 w-1 h-full bg-brand-orange scale-y-0 group-hover:scale-y-100 transition-transform duration-500 origin-bottom"></div>
+                            <h3 class="font-heading text-4xl md:text-5xl font-bold tracking-tight group-hover:translate-x-4 transition-transform duration-500 ease-out">Ownership mindset</h3>
+                        </div>
+                        <div class="w-full md:w-1/2 p-8 md:px-16 lg:pr-24 md:py-12 lg:py-16 md:pl-0 flex items-center">
+                            <p class="text-gray-300 text-sm md:text-base leading-relaxed font-medium max-w-lg group-hover:text-white transition-colors duration-500">
+                                Deliver theo tư duy design &rarr; Chủ động đề xuất và tham gia vào quyết định sản phẩm
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- HOW I THINK SECTION -->
+            <section id="how-i-think" class="flex flex-col relative z-10 bg-brand-bg text-brand-dark w-full border-t border-brand-dark">
+                <div class="p-8 md:p-16 lg:p-24 flex items-center bg-brand-bg border-b border-brand-dark relative z-10">
+                    <h2 class="reveal-text font-heading text-4xl md:text-5xl lg:text-[72px] font-bold uppercase tracking-tight leading-none">
+                        HOW I <span class="text-brand-orange">THINK</span>
+                    </h2>
+                </div>
+
+                <div class="stagger-list grid grid-cols-1 md:grid-cols-3 bg-white relative z-10">
+                    
+                    <div class="stagger-item interactable flex flex-col py-8 pl-8 pr-4 md:py-12 md:pl-16 md:pr-6 lg:py-16 lg:pl-24 lg:pr-12 border-b md:border-b-0 md:border-r border-brand-dark group hover:bg-brand-dark transition-colors duration-500">
+                        <div class="bg-brand-dark group-hover:bg-brand-orange transition-colors duration-500 text-white font-bold w-12 h-12 flex items-center justify-center mb-8 text-lg">
+                            01
+                        </div>
+                        <h3 class="font-heading text-3xl font-bold mb-4 tracking-tight group-hover:text-white transition-colors duration-500">Bắt đầu từ vấn đề</h3>
+                        <p class="text-gray-600 group-hover:text-gray-300 transition-colors duration-500 font-medium leading-relaxed">
+                            Không phải cái gì cũng cần làm ngay nhưng cái gì cũng cần được hiểu rõ trước
+                        </p>
+                    </div>
+
+                    <div class="stagger-item interactable flex flex-col py-8 px-4 md:py-12 md:px-6 lg:py-16 lg:px-12 border-b md:border-b-0 md:border-r border-brand-dark group hover:bg-brand-dark transition-colors duration-500">
+                        <div class="bg-brand-dark group-hover:bg-brand-orange transition-colors duration-500 text-white font-bold w-12 h-12 flex items-center justify-center mb-8 text-lg">
+                            02
+                        </div>
+                        <h3 class="font-heading text-3xl font-bold mb-4 tracking-tight group-hover:text-white transition-colors duration-500">Nghĩ theo hệ thống</h3>
+                        <p class="text-gray-600 group-hover:text-gray-300 transition-colors duration-500 font-medium leading-relaxed">
+                            Thiết kế hướng đến sự rõ ràng & khả năng mở rộng lâu dài, không phải các giải pháp nhất thời.
+                        </p>
+                    </div>
+
+                    <div class="stagger-item interactable flex flex-col py-8 pl-4 pr-8 md:py-12 md:pl-6 md:pr-16 lg:py-16 lg:pl-12 lg:pr-24 group hover:bg-brand-dark transition-colors duration-500">
+                        <div class="bg-brand-dark group-hover:bg-brand-orange transition-colors duration-500 text-white font-bold w-12 h-12 flex items-center justify-center mb-8 text-lg">
+                            03
+                        </div>
+                        <h3 class="font-heading text-3xl font-bold mb-4 tracking-tight group-hover:text-white transition-colors duration-500">Kiểm chứng sớm</h3>
+                        <p class="text-gray-600 group-hover:text-gray-300 transition-colors duration-500 font-medium leading-relaxed">
+                            Đừng giả định &rarr; hãy xác thực
+                        </p>
+                    </div>
+
+                </div>
+                
+                <div class="w-full h-[1px] bg-brand-dark"></div>
+            </section>
+
+            <!-- GOALS CHECK-IN -->
+            <section id="goals" class="flex flex-col relative z-10 bg-brand-bg text-brand-dark w-full border-t border-brand-dark overflow-hidden">
+                <div class="flex flex-col md:flex-row relative z-10">
+                    <div class="w-full md:w-[40%] p-8 md:p-16 lg:p-24 flex items-center">
+                        <h2 class="reveal-text font-heading text-4xl md:text-5xl lg:text-[72px] font-bold uppercase tracking-tight text-brand-dark leading-none">
+                            <span class="text-brand-orange">GOALS</span> CHECK-IN
+                        </h2>
+                    </div>
+                    <div class="w-full md:w-[60%] p-8 md:p-16 lg:p-24 flex items-center">
+                        <p class="hero-fade-up text-gray-600 text-base md:text-lg font-medium leading-relaxed max-w-xl">
+                            Không phải tất cả mục tiêu đều hoàn thành, nhưng giúp mình hiểu rõ hơn cách làm việc và vai trò của mình
+                        </p>
+                    </div>
+                </div>
+
+                <div class="w-full relative z-10">
+                    <div class="md:mx-[32px] h-[1px] bg-brand-dark opacity-30"></div>
+                </div>
+
+                <div class="stagger-list flex flex-col w-full relative z-10 md:px-[32px]">
+                    
+                    <!-- Table Header -->
+                    <div class="flex flex-col md:flex-row border-b border-brand-dark">
+                        <div class="w-full md:w-1/3 bg-brand-orange text-white py-6 pr-6 pl-8 md:py-8 md:pr-8 md:pl-8 lg:py-10 lg:pr-10 lg:pl-16 border-b md:border-b-0 md:border-r border-brand-dark flex items-center">
+                            <h3 class="font-heading text-4xl font-bold">Goal</h3>
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-8 md:px-8 lg:py-10 lg:px-10 border-b md:border-b-0 md:border-r border-brand-dark flex items-center">
+                            <h3 class="font-heading text-4xl font-bold">Nội dung</h3>
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-8 md:px-8 lg:py-10 lg:px-10 flex items-center">
+                            <h3 class="font-heading text-4xl font-bold">Status</h3>
+                        </div>
+                    </div>
+
+                    <!-- Rows -->
+                    <div class="stagger-item interactable flex flex-col md:flex-row border-b border-brand-dark hover:bg-white transition-colors duration-300 group">
+                        <div class="w-full md:w-1/3 group-hover:bg-brand-dark transition-colors duration-300 bg-brand-orange text-white py-6 pr-6 pl-8 md:py-6 md:pr-8 md:pl-8 lg:py-8 lg:pr-10 lg:pl-16 border-b md:border-b-0 md:border-r border-brand-dark font-bold text-lg flex items-center">
+                            Dự án Pebbles
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-6 md:px-8 lg:py-8 lg:px-10 border-b md:border-b-0 md:border-r border-brand-dark text-gray-700 font-medium leading-relaxed flex items-center">
+                            Đảm bảo thiết kế và trải nghiệm sản phẩm được triển khai trọn vẹn, đúng định hướng
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-6 md:px-8 lg:py-8 lg:px-10 text-gray-700 font-medium flex items-center relative overflow-hidden">
+                            <span class="relative z-10 group-hover:text-brand-orange font-bold transition-colors">On track</span>
+                        </div>
+                    </div>
+
+                    <div class="stagger-item interactable flex flex-col md:flex-row border-b border-brand-dark hover:bg-white transition-colors duration-300 group">
+                        <div class="w-full md:w-1/3 group-hover:bg-brand-dark transition-colors duration-300 bg-brand-orange text-white py-6 pr-6 pl-8 md:py-6 md:pr-8 md:pl-8 lg:py-8 lg:pr-10 lg:pl-16 border-b md:border-b-0 md:border-r border-brand-dark font-bold text-lg flex items-center">
+                            Product team
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-6 md:px-8 lg:py-8 lg:px-10 border-b md:border-b-0 md:border-r border-brand-dark text-gray-700 font-medium leading-relaxed flex items-center">
+                            Hỗ trợ anh Thành trong việc xây dựng team Product
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-6 md:px-8 lg:py-8 lg:px-10 text-gray-700 font-medium flex items-center relative overflow-hidden">
+                            <span class="relative z-10 group-hover:text-red-500 font-bold transition-colors">Blocked - thay đổi goal</span>
+                        </div>
+                    </div>
+
+                    <div class="stagger-item interactable flex flex-col md:flex-row border-b border-brand-dark hover:bg-white transition-colors duration-300 group">
+                        <div class="w-full md:w-1/3 group-hover:bg-brand-dark transition-colors duration-300 bg-brand-orange text-white py-6 pr-6 pl-8 md:py-6 md:pr-8 md:pl-8 lg:py-8 lg:pr-10 lg:pl-16 border-b md:border-b-0 md:border-r border-brand-dark font-bold text-lg flex items-center">
+                            Creative Studio
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-6 md:px-8 lg:py-8 lg:px-10 border-b md:border-b-0 md:border-r border-brand-dark text-gray-700 font-medium leading-relaxed flex items-center">
+                            Hỗ trợ anh Thành trong công việc của Creative Side
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-6 md:px-8 lg:py-8 lg:px-10 text-gray-700 font-medium flex items-center relative overflow-hidden">
+                            <span class="relative z-10 group-hover:text-yellow-600 font-bold transition-colors">Pending - đã đề xuất ideal sản phẩm mới</span>
+                        </div>
+                    </div>
+
+                    <div class="stagger-item interactable flex flex-col md:flex-row border-b border-brand-dark hover:bg-white transition-colors duration-300 group">
+                        <div class="w-full md:w-1/3 group-hover:bg-brand-dark transition-colors duration-300 bg-brand-orange text-white py-6 pr-6 pl-8 md:py-6 md:pr-8 md:pl-8 lg:py-8 lg:pr-10 lg:pl-16 border-b md:border-b-0 md:border-r border-brand-dark font-bold text-lg flex items-center">
+                            Lead Vy
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-6 md:px-8 lg:py-8 lg:px-10 border-b md:border-b-0 md:border-r border-brand-dark text-gray-700 font-medium leading-relaxed flex flex-col justify-center items-start">
+                            <span>Lên checklist review Mid 2</span>
+                            <span>Review định kỳ hàng tháng để giúp Vy lên Mid 2</span>
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-6 md:px-8 lg:py-8 lg:px-10 text-gray-700 font-medium flex items-center relative overflow-hidden">
+                            <span class="relative z-10 group-hover:text-blue-600 font-bold transition-colors">Partial - không có cơ hội làm chung nhiều dự án</span>
+                        </div>
+                    </div>
+
+                    <div class="stagger-item interactable flex flex-col md:flex-row border-b border-brand-dark hover:bg-white transition-colors duration-300 group">
+                        <div class="w-full md:w-1/3 group-hover:bg-brand-dark transition-colors duration-300 bg-brand-orange text-white py-6 pr-6 pl-8 md:py-6 md:pr-8 md:pl-8 lg:py-8 lg:pr-10 lg:pl-16 border-b md:border-b-0 md:border-r border-brand-dark font-bold text-lg flex items-center">
+                            Workshop cuối năm
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-6 md:px-8 lg:py-8 lg:px-10 border-b md:border-b-0 md:border-r border-brand-dark text-gray-700 font-medium leading-relaxed flex items-center">
+                            Hỗ trợ anh Thành trong việc tổ chức workshop
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-6 md:px-8 lg:py-8 lg:px-10 text-gray-700 font-medium flex items-center relative overflow-hidden">
+                            <span class="relative z-10 group-hover:text-yellow-600 font-bold transition-colors">Pending - đã đề xuất ideal về workshop</span>
+                        </div>
+                    </div>
+
+                    <div class="stagger-item interactable flex flex-col md:flex-row hover:bg-white transition-colors duration-300 group">
+                        <div class="w-full md:w-1/3 group-hover:bg-brand-dark transition-colors duration-300 bg-brand-orange text-white py-6 pr-6 pl-8 md:py-6 md:pr-8 md:pl-8 lg:py-8 lg:pr-10 lg:pl-16 border-b md:border-b-0 md:border-r border-brand-dark font-bold text-lg flex items-center">
+                            Bản thân
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-6 md:px-8 lg:py-8 lg:px-10 border-b md:border-b-0 md:border-r border-brand-dark text-gray-700 font-medium leading-relaxed flex items-center">
+                            Trau dồi kỹ năng, nâng cấp bản thân với mục tiêu cuối năm sẽ lên level Senior 1
+                        </div>
+                        <div class="w-full md:w-1/3 py-6 px-6 md:py-6 md:px-8 lg:py-8 lg:px-10 text-gray-700 font-medium flex items-center relative overflow-hidden">
+                            <span class="relative z-10 group-hover:text-brand-orange font-bold transition-colors">On track</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- WHAT'S NEXT -->
+            <section id="whats-next" class="flex flex-col relative z-10 bg-brand-bg text-brand-dark w-full border-t border-brand-dark">
+                <div class="p-8 md:p-16 lg:p-24 flex items-center border-b border-brand-dark relative z-10 bg-brand-bg">
+                    <h2 class="reveal-text font-heading text-4xl md:text-5xl lg:text-[72px] font-bold uppercase tracking-tight leading-none">
+                        WHAT'S <span class="text-brand-orange">NEXT</span>
+                    </h2>
+                </div>
+
+                <div class="stagger-list flex flex-col w-full relative z-10 bg-white">
+                    
+                    <div class="stagger-item interactable px-8 py-6 md:px-16 md:py-10 lg:px-24 lg:py-12 flex flex-col md:flex-row gap-6 md:gap-12 border-b border-brand-dark group hover:bg-gray-50 transition-colors relative z-10 overflow-hidden">
+                        <div class="absolute left-0 top-0 h-full w-2 bg-brand-orange -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+                        <div class="bg-brand-orange text-white font-bold w-16 h-[50px] flex items-center justify-center text-lg border border-brand-dark shrink-0 group-hover:bg-brand-dark transition-colors duration-300">
+                            01
+                        </div>
+                        <div class="flex flex-col pt-1 md:pt-0">
+                            <h3 class="font-heading text-3xl md:text-4xl font-bold mb-4 tracking-tight group-hover:text-brand-orange transition-colors duration-300">AI & Workflow</h3>
+                            <p class="text-gray-600 text-lg font-medium leading-relaxed max-w-4xl">
+                                Ứng dụng AI vào workflow để tăng tốc độ và hiệu quả công việc, từ việc xây dựng concept, prototype đến trình bày và triển khai.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="stagger-item interactable px-8 py-6 md:px-16 md:py-10 lg:px-24 lg:py-12 flex flex-col md:flex-row gap-6 md:gap-12 border-b border-brand-dark group hover:bg-gray-50 transition-colors relative z-10 overflow-hidden">
+                        <div class="absolute left-0 top-0 h-full w-2 bg-brand-orange -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+                        <div class="bg-brand-orange text-white font-bold w-16 h-[50px] flex items-center justify-center text-lg border border-brand-dark shrink-0 group-hover:bg-brand-dark transition-colors duration-300">
+                            02
+                        </div>
+                        <div class="flex flex-col pt-1 md:pt-0">
+                            <h3 class="font-heading text-3xl md:text-4xl font-bold mb-4 tracking-tight group-hover:text-brand-orange transition-colors duration-300">Hiểu sâu hơn về Tech/ Design System</h3>
+                            <p class="text-gray-600 text-lg font-medium leading-relaxed max-w-4xl">
+                                Tìm hiểu sâu hơn về cách team dev triển khai sản phẩm, cách code được tổ chức và vận hành, nhằm thiết kế sát thực tế hơn và hỗ trợ team hiệu quả hơn.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="stagger-item interactable px-8 py-6 md:px-16 md:py-10 lg:px-24 lg:py-12 flex flex-col md:flex-row gap-6 md:gap-12 border-b border-brand-dark group hover:bg-gray-50 transition-colors relative z-10 overflow-hidden">
+                        <div class="absolute left-0 top-0 h-full w-2 bg-brand-orange -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+                        <div class="bg-brand-orange text-white font-bold w-16 h-[50px] flex items-center justify-center text-lg border border-brand-dark shrink-0 group-hover:bg-brand-dark transition-colors duration-300">
+                            03
+                        </div>
+                        <div class="flex flex-col pt-1 md:pt-0">
+                            <h3 class="font-heading text-3xl md:text-4xl font-bold mb-4 tracking-tight group-hover:text-brand-orange transition-colors duration-300">Leadership</h3>
+                            <p class="text-gray-600 text-lg font-medium leading-relaxed max-w-4xl">
+                                Phát triển kỹ năng dẫn dắt, không chỉ ở việc định hướng ban đầu mà còn duy trì sự liên tục và hiệu quả trong quá trình làm việc với team.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- REFLECTIONS -->
+            <section id="reflections" class="flex flex-col md:flex-row relative z-10 w-full border-t border-brand-dark">
+                <div class="w-full md:w-1/2 bg-brand-bg p-8 md:p-16 lg:p-24 flex flex-col justify-between border-b md:border-b-0 md:border-r border-brand-dark relative z-10 min-h-[400px]">
+                    <h2 class="reveal-text font-heading text-4xl md:text-5xl lg:text-[72px] font-bold uppercase tracking-tight text-brand-dark leading-[1.1]">
+                        REFLECTIONS &<br>
+                        <span class="text-brand-orange">SUGGESTIONS</span>
+                    </h2>
+                    
+                    <p class="hero-fade-up mt-8 text-gray-500 text-base md:text-lg font-medium leading-relaxed max-w-xl">
+                        Linh tinh mà không linh tinh. Chia sẻ nhỏ nhưng hy vọng sẽ hữu ích cho team và công ty
+                    </p>
+                </div>
+
+                <div class="stagger-list w-full md:w-1/2 bg-brand-orange text-white flex flex-col relative z-10">
+                    <div class="stagger-item interactable flex-1 px-8 py-6 md:px-16 md:py-10 lg:px-24 lg:py-12 border-b border-white/30 flex flex-col justify-center hover:bg-[#E63000] transition-colors">
+                        <div class="bg-white text-brand-dark font-bold w-14 h-12 flex items-center justify-center mb-8 text-lg">
+                            01
+                        </div>
+                        <h3 class="font-heading text-3xl md:text-4xl font-bold mb-4 tracking-tight">Follow-through sản phẩm</h3>
+                        <p class="text-white/90 text-lg font-medium leading-relaxed max-w-4xl">
+                            Mình hiểu việc thay đổi và điều chỉnh liên tục là cần thiết trong quá trình làm sản phẩm. Tuy nhiên, mình mong rằng những sản phẩm đã đi đến giai đoạn hoàn thiện (từ ý tưởng đến sản xuất) sẽ được triển khai đến cùng.
+                        </p>
+                    </div>
+
+                    <div class="stagger-item interactable flex-1 px-8 py-6 md:px-16 md:py-10 lg:px-24 lg:py-12 flex flex-col justify-center hover:bg-[#E63000] transition-colors">
+                        <div class="bg-white text-brand-dark font-bold w-14 h-12 flex items-center justify-center mb-8 text-lg">
+                            02
+                        </div>
+                        <h3 class="font-heading text-3xl md:text-4xl font-bold mb-4 tracking-tight">Hệ thống đánh giá rõ ràng</h3>
+                        <p class="text-white/90 text-lg font-medium leading-relaxed max-w-4xl">
+                            Cần một framework để biết mình đang ở đâu và cần cải thiện gì<br>
+                            &rarr; Giúp cá nhân phát triển và team vận hành tốt hơn
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FINAL OUTRO -->
+            <section class="flex flex-col relative z-10 bg-[#18181B] text-white w-full border-t border-brand-dark">
+                <div class="flex flex-col w-full min-h-[60vh] p-8 md:p-16 lg:p-24 relative overflow-hidden">
+                    
+                    <div class="w-full max-w-5xl mb-auto relative z-10">
+                        <h2 class="reveal-text font-heading text-5xl md:text-7xl lg:text-[64px] font-bold uppercase tracking-tight leading-[1.15] text-white mix-blend-difference">
+                            Vẫn đang trên con<br class="hidden md:block">
+                            đường học hỏi và mình<br class="hidden md:block">
+                            thấy vui vì điều đó.
+                        </h2>
+                    </div>
+
+                    <div class="hero-fade-up flex flex-col md:flex-row justify-between items-start md:items-end mt-16 md:mt-32 gap-12 md:gap-8 relative z-10">
+                        <div class="w-full md:w-1/2">
+                            <p class="interactable text-brand-orange inline-block text-xl md:text-2xl font-medium tracking-wide border-b border-transparent hover:border-brand-orange transition-colors cursor-pointer">
+                                Lan Nhi - UIUX Designer
+                            </p>
+                        </div>
+                        
+                        <div class="w-full md:w-1/2 flex flex-col gap-8 md:pl-8 lg:pl-16">
+                            <p class="text-white/80 text-lg md:text-xl font-medium leading-relaxed max-w-xl">
+                                Nửa năm vừa qua là một hành trình nhiều trải nghiệm, và mình vẫn đang từng bước "level up" mỗi ngày, chậm thôi nhưng chắc.
+                            </p>
+                            <p class="text-white/80 text-lg md:text-xl font-medium leading-relaxed max-w-xl">
+                                Cảm ơn team đã đồng hành cùng mình đến đây. Và nếu có thể, cùng nhau đi tiếp lâu hơn nữa nhé!
+                            </p>
+                        </div>
+                    </div>
+                    
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Scripts cho Hiệu ứng -->
+    <!-- 1. SplitType cho Line Reveal -->
+    <script src="https://unpkg.com/split-type"></script>
+    <!-- 2. GSAP Core & ScrollTrigger -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <!-- 3. Lenis cho Smooth Scroll -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            // Bỏ class js-loading để hiện nội dung
+            document.documentElement.classList.remove('js-loading');
+
+            // --- 1. SETUP LENIS SMOOTH SCROLL ---
+            const lenis = new Lenis({
+                duration: 1.2,
+                easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // easeOutQuart
+                direction: 'vertical',
+                gestureDirection: 'vertical',
+                smooth: true,
+                mouseMultiplier: 1,
+                smoothTouch: false,
+                touchMultiplier: 2,
+                infinite: false,
+            });
+
+            lenis.on('scroll', ScrollTrigger.update);
+            gsap.ticker.add((time) => { lenis.raf(time * 1000) });
+            gsap.ticker.lagSmoothing(0);
+
+
+            // --- 2. CUSTOM CURSOR ---
+            const cursor = document.querySelector('.cursor-dot');
+            const interactables = document.querySelectorAll('a, button, .interactable');
+
+            // Follow mouse
+            document.addEventListener('mousemove', (e) => {
+                gsap.to(cursor, {
+                    x: e.clientX,
+                    y: e.clientY,
+                    duration: 0.1,
+                    ease: "power2.out"
+                });
+            });
+
+            // Hover state
+            interactables.forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('active'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('active'));
+            });
+
+
+            // --- 3. MAGNETIC HOVER EFFECT FOR HEADER LINKS ---
+            const magneticElements = document.querySelectorAll('.magnetic-item');
+            magneticElements.forEach((el) => {
+                el.addEventListener('mousemove', (e) => {
+                    const position = el.getBoundingClientRect();
+                    const x = e.clientX - position.left - position.width / 2;
+                    const y = e.clientY - position.top - position.height / 2;
+                    
+                    gsap.to(el, {
+                        x: x * 0.4,
+                        y: y * 0.4,
+                        duration: 0.5,
+                        ease: "power2.out"
+                    });
+                });
+
+                el.addEventListener('mouseleave', () => {
+                    gsap.to(el, {
+                        x: 0,
+                        y: 0,
+                        duration: 0.7,
+                        ease: "elastic.out(1, 0.3)"
+                    });
+                });
+            });
+
+
+            // --- 4. LINE REVEAL (TEXT ANIMATIONS) ---
+            const revealTexts = document.querySelectorAll('.reveal-text');
+            
+            revealTexts.forEach(text => {
+                // Tách text thành các dòng
+                const splitText = new SplitType(text, { types: 'lines, words' });
+                
+                // Bọc từng dòng trong một div có overflow hidden để tạo hiệu ứng mask vén màn
+                splitText.lines.forEach(line => {
+                    const wrapper = document.createElement('div');
+                    wrapper.style.overflow = 'hidden';
+                    wrapper.style.display = 'block'; // Đảm bảo block level
+                    line.parentNode.insertBefore(wrapper, line);
+                    wrapper.appendChild(line);
+                });
+
+                gsap.from(splitText.words, {
+                    scrollTrigger: {
+                        trigger: text,
+                        start: "top 90%", // Trigger khi element gần tới view
+                    },
+                    y: "120%", // Translate text xuống dưới 
+                    rotationZ: 3, // Xoay nhẹ tạo cảm giác organic
+                    opacity: 0,
+                    duration: 0.9,
+                    ease: "power4.out",
+                    stagger: 0.02 // Stagger rất nhỏ giữa các chữ
+                });
+            });
+
+            
+            // --- 5. HERO ELEMENTS FADE UP ---
+            gsap.from('.hero-fade-up', {
+                y: 30,
+                opacity: 0,
+                duration: 1,
+                ease: "power3.out",
+                stagger: 0.1,
+                delay: 0.2 // Đợi chữ to chạy trước xíu
+            });
+
+            // Thay thế hiệu ứng fade up cũ bằng Clip-path Reveal + Scale (Awwwards Style)
+            gsap.set('.hero-img-box', { clipPath: 'polygon(0 100%, 100% 100%, 100% 100%, 0 100%)' });
+            gsap.set('.hero-img', { scale: 1.4 });
+            gsap.set('.hero-shadow', { x: 0, y: 0, opacity: 0 });
+
+            const heroImgTl = gsap.timeline({ delay: 0.4 });
+            
+            // Hiện cụm wrapper lên (Tách riêng div hero-anim-wrapper để GSAP không xóa mất góc nghiêng rotate-3 của Tailwind)
+            gsap.from('.hero-anim-wrapper', {
+                y: 50,
+                opacity: 0,
+                duration: 1.5,
+                ease: "power3.out"
+            });
+
+            heroImgTl.to('.hero-img-box', {
+                clipPath: 'polygon(0 0%, 100% 0%, 100% 100%, 0 100%)',
+                duration: 1.5,
+                ease: "power4.inOut"
+            }, 0)
+            .to('.hero-img', {
+                scale: 1.1, // Scale về mức base 1.1 (Tailwind class scale-110)
+                duration: 1.5,
+                ease: "power4.inOut"
+            }, 0)
+            .to('.hero-shadow', {
+                x: 16, // tương đương translate-x-4 (1rem = 16px)
+                y: 16, // tương đương translate-y-4
+                opacity: 1,
+                duration: 1.2,
+                ease: "back.out(1.5)"
+            }, 0.8);
+
+            // --- 6. IMAGE REVEAL (Đã fix lỗi hở nền đen) ---
+            const imgContainers = document.querySelectorAll('.reveal-img-container');
+            
+            imgContainers.forEach(container => {
+                // Mask Wipe Effect khi cuộn tới
+                gsap.set(container, { clipPath: 'inset(100% 0 0 0)' }); // Ban đầu ẩn bằng mask từ dưới lên
+                
+                gsap.to(container, {
+                    scrollTrigger: {
+                        trigger: container,
+                        start: "top 85%",
+                    },
+                    clipPath: 'inset(0% 0 0 0)',
+                    duration: 1.2,
+                    ease: "power4.inOut"
+                });
+
+                // Đã xóa bỏ hiệu ứng Parallax (yPercent) ở đây để ảnh không bị đẩy xuống
+            });
+
+            // --- 7. STAGGER LIST REVEALS ---
+            const staggerLists = document.querySelectorAll('.stagger-list');
+            
+            staggerLists.forEach(list => {
+                const items = list.querySelectorAll('.stagger-item');
+                
+                gsap.from(items, {
+                    scrollTrigger: {
+                        trigger: list,
+                        start: "top 85%",
+                    },
+                    y: 40,
+                    opacity: 0,
+                    duration: 0.8,
+                    stagger: 0.1, // Lần lượt hiện ra
+                    ease: "power3.out"
+                });
+            });
+
+            // Các Info trong Project Card
+            const projectInfos = document.querySelectorAll('.project-info-stagger');
+            projectInfos.forEach(info => {
+                gsap.from(info.children, {
+                    scrollTrigger: {
+                        trigger: info,
+                        start: "top 90%",
+                    },
+                    y: 20,
+                    opacity: 0,
+                    duration: 0.6,
+                    stagger: 0.1,
+                    ease: "power2.out"
+                });
+            });
+            
+            // --- 8. HEADER NAVIGATION SMOOTH SCROLL ---
+            const header = document.querySelector('header');
+            const navLinks = document.querySelectorAll('nav a[href^="#"]');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); // Ngăn trình duyệt nhảy giật cục xuống section
+                    const targetId = link.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    
+                    if (targetSection) {
+                        // Tính toán scroll với offset bù trừ cho độ cao của sticky header 
+                        // (Header cao bao nhiêu thì trừ đi bấy nhiêu để không bị che khuất chữ)
+                        lenis.scrollTo(targetSection, {
+                            offset: -header.offsetHeight,
+                            duration: 1.5,
+                            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+                        });
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+</html>
